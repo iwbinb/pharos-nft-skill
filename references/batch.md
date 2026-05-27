@@ -12,12 +12,12 @@ Use this pattern any time the same workflow would otherwise issue more than 3 se
 
 ## When To Use Multicall3 vs Native Batch Methods
 
-- **ERC-1155 same-collection, many (holder, tokenId) pairs**: prefer the contract's native `balanceOfBatch(address[],uint256[])` — one RPC, no Multicall3 needed. See [`ownership.md`](ownership.md#erc-1155-balance-check).
+- **ERC-1155 same-collection, many (holder, tokenId) pairs**: prefer the contract's native `balanceOfBatch(address[],uint256[])` (one RPC, no Multicall3 needed). See [`ownership.md`](ownership.md#erc-1155-balance-check).
 - **Any other batching** (cross-collection, ERC-721 `balanceOf` of many wallets, ERC-721 `ownerOf` of many tokenIds, mixed read calls): use Multicall3 `aggregate3`.
 
 ---
 
-## Command Template — aggregate3
+## Command Template: aggregate3
 
 ```bash
 SKILL_DIR=~/.claude/skills/pharos-nft-skill
@@ -25,15 +25,15 @@ NET=atlantic-testnet
 RPC=$(jq -r --arg n "$NET" '.networks[] | select(.name==$n) | .rpcUrl' "$SKILL_DIR/assets/networks.json")
 MC3=$(jq -r --arg n "$NET" '.deployedOn[$n]' "$SKILL_DIR/assets/multicall.json")
 
-# Step 1 — encode each individual call's calldata
+# Step 1: encode each individual call's calldata
 CALLDATA_1=$(cast calldata "balanceOf(address)(uint256)" 0xWALLET_A)
 CALLDATA_2=$(cast calldata "balanceOf(address)(uint256)" 0xWALLET_B)
 CALLDATA_3=$(cast calldata "ownerOf(uint256)(address)" 42)
 
-# Step 2 — assemble the Call3 tuple array literal
+# Step 2: assemble the Call3 tuple array literal
 CALLS="[(0xCOLLECTION_A,false,$CALLDATA_1),(0xCOLLECTION_A,false,$CALLDATA_2),(0xCOLLECTION_B,true,$CALLDATA_3)]"
 
-# Step 3 — execute the batch
+# Step 3: execute the batch
 RAW=$(cast call "$MC3" "aggregate3((address,bool,bytes)[])((bool,bytes)[])" "$CALLS" --rpc-url "$RPC")
 echo "$RAW"
 ```
@@ -104,7 +104,7 @@ done
 
 ### Agent Guidelines
 
-> Show the user a progress indicator when chunking — e.g. `chunk 3/12 done, 1500/6000 results in`. Snapshots of large collections can take 30+ seconds; silent waits are a worse user experience than verbose ones.
+> Show the user a progress indicator when chunking: e.g. `chunk 3/12 done, 1500/6000 results in`. Snapshots of large collections can take 30+ seconds; silent waits are a worse user experience than verbose ones.
 
 ---
 
@@ -140,7 +140,7 @@ cast call "$MC3" "aggregate3((address,bool,bytes)[])((bool,bytes)[])" "$CALLS" -
 
 ## Many-Wallet Membership Check (Airdrop Snapshot)
 
-Check whether each wallet in a large list holds ≥ 1 NFT from a target collection — the core primitive behind airdrop eligibility, gated whitelists, and DAO voting weight.
+Check whether each wallet in a large list holds ≥ 1 NFT from a target collection: the core primitive behind airdrop eligibility, gated whitelists, and DAO voting weight.
 
 ```bash
 WALLETS_FILE=eligible-candidates.txt   # one address per line

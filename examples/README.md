@@ -7,7 +7,7 @@ Sample inputs that demonstrate the eligibility rule DSL described in [`../refere
 | `rule-airdrop-example.json` | Compound `all_of` + `none_of` rule for an airdrop snapshot. |
 | `rule-gating-example.json` | Compound `any_of` rule with a nested trait filter (`tier: founder`). |
 
-Both files use placeholder collection addresses (`0x...aaaa`, `0x...bbbb`, `0x...cccc`). Replace with real Pharos collections — for example the demo fixtures from `../assets/fixtures/` — before running.
+Both files use placeholder collection addresses (`0x...aaaa`, `0x...bbbb`, `0x...cccc`). Replace with real Pharos collections (for example the demo fixtures from `../assets/fixtures/`) before running.
 
 ## Running an Example
 

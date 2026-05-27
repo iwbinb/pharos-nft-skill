@@ -1,6 +1,6 @@
 # Eligibility Rule DSL and Batch Evaluation
 
-This file specifies the declarative eligibility DSL — the killer feature of `pharos-nft-skill`. Given a set of wallets and a rule expressed as JSON, decide for each wallet whether it satisfies the rule. The DSL composes any boolean combination of NFT-ownership constraints with thresholds and optional trait filters.
+This file specifies the declarative eligibility DSL: the killer feature of `pharos-nft-skill`. Given a set of wallets and a rule expressed as JSON, decide for each wallet whether it satisfies the rule. The DSL composes any boolean combination of NFT-ownership constraints with thresholds and optional trait filters.
 
 Typical use cases:
 
@@ -8,7 +8,7 @@ Typical use cases:
 - Gated whitelist: "any wallet that holds (≥ 1 Founder NFT) OR (≥ 5 Genesis NFTs AND no Blacklist NFT)."
 - DAO voting weight precondition: "wallet holds ≥ 1 governance NFT at block N."
 
-The DSL is intentionally tiny — 4 node types — and is evaluated by `jq` over pre-batched holdings data, so end-to-end runs are bounded by RPC time, not by evaluator complexity.
+The DSL is intentionally tiny (4 node types) and is evaluated by `jq` over pre-batched holdings data, so end-to-end runs are bounded by RPC time, not by evaluator complexity.
 
 ---
 
@@ -80,14 +80,14 @@ Eligibility evaluation is a four-stage pipeline:
 
 Stages 1, 2, 4 are pure; only stage 3 makes external network calls (IPFS), and even that is cache-friendly.
 
-### Stage 1 — Extract Referenced Collections
+### Stage 1: Extract Referenced Collections
 
 ```bash
 RULE_FILE=rule.json
 jq '[.. | objects | select(has("min_count")) | .min_count.collection] | unique' "$RULE_FILE"
 ```
 
-### Stage 2 — Build Holdings Snapshot per Wallet
+### Stage 2: Build Holdings Snapshot per Wallet
 
 For each wallet in the input list, produce a JSON object of the shape:
 
@@ -102,7 +102,7 @@ For ERC-1155 collections, encode each entry as `"<tokenId>:<balance>"` so the le
 
 Use the holdings enumeration patterns from [`ownership.md`](ownership.md) and [`snapshot.md`](snapshot.md). Persist results in `holdings/<wallet>.json` for the duration of the run.
 
-### Stage 3 — Apply Trait Filters
+### Stage 3: Apply Trait Filters
 
 Only invoke this stage if the rule contains any `traits` filter. For each `(collection, tokenId)` referenced by a wallet's holdings AND mentioned in a traits-bearing leaf:
 
@@ -113,7 +113,7 @@ META=$(./metadata-fetch.sh "$COLLECTION" "$TOKEN_ID")   # see metadata.md
 
 Cache aggressively keyed by `(collection, tokenId)`; metadata is immutable for normal collections.
 
-### Stage 4 — Evaluate Rule
+### Stage 4: Evaluate Rule
 
 The evaluator is a single jq expression that recurses over the rule tree. It receives the rule and the holdings snapshot as inputs and emits `true` / `false` per wallet.
 
@@ -206,11 +206,11 @@ Persist `holdings/<wallet>.json` files so re-runs of the same rule against the s
 
 ### Agent Guidelines
 
-> Always **dry-run** the rule against a single known-good wallet before the full batch — surface that one wallet's evaluation trace ("Founder leaf: true, Blacklist leaf: false → all_of: true"). Only then proceed to the full batch. After completion, present three counts: total wallets, eligible count, ineligible count, plus a 10-row preview of each bucket. Offer to dump the full lists as CSV.
+> Always **dry-run** the rule against a single known-good wallet before the full batch, surfacing that one wallet's evaluation trace ("Founder leaf: true, Blacklist leaf: false → all_of: true"). Only then proceed to the full batch. After completion, present three counts: total wallets, eligible count, ineligible count, plus a 10-row preview of each bucket. Offer to dump the full lists as CSV.
 
 ---
 
-## Worked Example — Pharos Atlantic Testnet
+## Worked Example: Pharos Atlantic Testnet
 
 Assume `rule.json` is the full example from above, and `wallets.txt` has 1,000 addresses one per line.
 

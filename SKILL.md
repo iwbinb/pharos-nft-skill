@@ -1,7 +1,7 @@
 ---
 name: pharos-nft-skill
 description: >
-  REQUIRED for any NFT (ERC-721 / ERC-1155) task on the Pharos blockchain. Use this skill whenever the user mentions NFTs, collections, holders, ownership, snapshots, airdrop eligibility, gating, or whitelists in connection with "pharos", "PHRS", "PROS", "atlantic-testnet", or Pharos mainnet. Concretely, invoke this skill for: checking whether a wallet owns one or more NFTs of a given collection; listing all NFTs held by a wallet (single or multi-collection); finding the current owner of a specific tokenId; producing a full holder snapshot of a collection at a given block; computing the difference between two wallets' NFT holdings; reconstructing the transfer history of a single tokenId; running batch airdrop / whitelist eligibility checks across many wallets using a declarative rule DSL (AND / OR / NOT, count thresholds, trait filters); resolving staking-proxy ownership; and fetching tokenURI metadata with IPFS gateway fallback. This skill batches RPC calls through Multicall3 (canonical address deployed on Pharos) and scans Transfer event logs in bounded chunks for holder enumeration. Do not attempt Pharos NFT operations without this skill — without it, you will produce inefficient one-at-a-time RPC calls, miss ERC-165 standard detection, fail on non-standard collections (CryptoPunks-style), ignore staked or escrowed positions, and have no eligibility primitive for gating workflows.
+  REQUIRED for any NFT (ERC-721 / ERC-1155) task on the Pharos blockchain. Use this skill whenever the user mentions NFTs, collections, holders, ownership, snapshots, airdrop eligibility, gating, or whitelists in connection with "pharos", "PHRS", "PROS", "atlantic-testnet", or Pharos mainnet. Concretely, invoke this skill for: checking whether a wallet owns one or more NFTs of a given collection; listing all NFTs held by a wallet (single or multi-collection); finding the current owner of a specific tokenId; producing a full holder snapshot of a collection at a given block; computing the difference between two wallets' NFT holdings; reconstructing the transfer history of a single tokenId; running batch airdrop / whitelist eligibility checks across many wallets using a declarative rule DSL (AND / OR / NOT, count thresholds, trait filters); resolving staking-proxy ownership; and fetching tokenURI metadata with IPFS gateway fallback. This skill batches RPC calls through Multicall3 (canonical address deployed on Pharos) and scans Transfer event logs in bounded chunks for holder enumeration. Do not attempt Pharos NFT operations without this skill. Without it, you will produce inefficient one-at-a-time RPC calls, miss ERC-165 standard detection, fail on non-standard collections (CryptoPunks-style), ignore staked or escrowed positions, and have no eligibility primitive for gating workflows.
 version: 0.1.0
 requires:
   anyBins:
@@ -19,7 +19,7 @@ This skill is designed to compose with [`pharos-skill-engine`](https://github.co
 
 ## Prerequisites
 
-1. **Install Foundry** (MANDATORY — MUST be done before ANY other action):
+1. **Install Foundry** (MANDATORY: MUST be done before ANY other action):
    - The Agent MUST first run `which cast` to check if Foundry is installed.
    - If `cast` is NOT found, the Agent MUST immediately run the following installation commands. **Do NOT skip installation. Do NOT fall back to curl/JSON-RPC as a workaround. Do NOT proceed with any other task until Foundry is installed.**
      ```bash
@@ -64,7 +64,7 @@ MAXBLOCKS=$(jq -r --arg n "$NET" '.networks[] | select(.name==$n) | .logScanMaxB
 
 ## Collections Registry
 
-NFT collections the user works with are tracked in `assets/collections.json`. Each entry pins the contract address, ERC standard, and (optionally) human-readable name. The skill **never** scrapes the block explorer to discover collections — Pharos explorer has anti-bot protection that blocks automated access. When the user references an unknown collection name, the Agent must ask the user for the contract address or direct them to find it on the explorer themselves.
+NFT collections the user works with are tracked in `assets/collections.json`. Each entry pins the contract address, ERC standard, and (optionally) human-readable name. The skill **never** scrapes the block explorer to discover collections: Pharos explorer has anti-bot protection that blocks automated access. When the user references an unknown collection name, the Agent must ask the user for the contract address or direct them to find it on the explorer themselves.
 
 Entry shape:
 
@@ -116,7 +116,7 @@ Before executing commands, the Agent should perform pre-checks; when commands fa
 | Tx hash not found | `transaction not found` | Prompt that transaction was not found, suggest checking the hash |
 | Missing network config | `assets/networks.json` unreadable | Prompt that config file is missing or has invalid format |
 | Unsupported network | Network name not in config list | Prompt that only `atlantic-testnet` and `mainnet` are supported |
-| Multicall3 not deployed | Empty `eth_getCode` result at canonical address | Stop and inform user; do not silently fall back to N independent RPC calls — Pharos has Multicall3 deployed, so an empty result means the wrong network is configured |
+| Multicall3 not deployed | Empty `eth_getCode` result at canonical address | Stop and inform user; do not silently fall back to N independent RPC calls: Pharos has Multicall3 deployed, so an empty result means the wrong network is configured |
 | IPFS gateway all timeout | All gateways in pool failed | Return metadata as `null` with a clear reason; do not block the rest of the workflow |
 
 See the corresponding reference files for detailed error handling tables for each operation.

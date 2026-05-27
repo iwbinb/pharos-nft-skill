@@ -1,12 +1,12 @@
 # NFT Metadata Operation Instructions
 
-This file describes how to fetch and parse the metadata associated with a specific NFT — `tokenURI(uint256)` for ERC-721, `uri(uint256)` for ERC-1155 — with robust handling of the three common URI schemes (HTTPS, IPFS, data URI) and a multi-gateway race pool for IPFS resolution.
+This file describes how to fetch and parse the metadata associated with a specific NFT (via `tokenURI(uint256)` for ERC-721 or `uri(uint256)` for ERC-1155), with robust handling of the three common URI schemes (HTTPS, IPFS, data URI) and a multi-gateway race pool for IPFS resolution.
 
 Metadata is consumed by:
 
 - Trait filters in the eligibility DSL ([`eligibility.md`](eligibility.md)).
 - User-facing presentation of NFTs in holdings listings.
-- Image fetches for downstream rendering (out of scope for this skill — addresses, names, and attributes are enough for gating).
+- Image fetches for downstream rendering (out of scope for this skill: addresses, names, and attributes are enough for gating).
 
 > **No explorer scraping**: This skill never resolves metadata through the Pharos block explorer. All URIs come from on-chain calls to the collection contract itself.
 
@@ -125,7 +125,7 @@ fetch_ipfs() {
 
 ### Agent Guidelines
 
-> Never block a workflow on IPFS — eligibility checks should degrade gracefully when metadata is unavailable. Cache successful fetches keyed by `(collection, tokenId)`; metadata is immutable for well-behaved collections, and re-fetching the same tokenId across an eligibility run wastes wall time.
+> Never block a workflow on IPFS: eligibility checks should degrade gracefully when metadata is unavailable. Cache successful fetches keyed by `(collection, tokenId)`; metadata is immutable for well-behaved collections, and re-fetching the same tokenId across an eligibility run wastes wall time.
 
 ---
 

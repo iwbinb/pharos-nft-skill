@@ -33,7 +33,7 @@ The official `pharos-skill-engine` covers ERC-20 and generic contract interactio
 - Missed ERC-165 detection, leading to wrong code paths on non-Enumerable collections.
 - Silent failures on non-standard contracts (CryptoPunks-style).
 - Wrong ownership results when NFTs are staked or held in escrow proxies.
-- No primitive for "is wallet X eligible for this airdrop?" — the most common multi-wallet NFT question.
+- No primitive for "is wallet X eligible for this airdrop?": the most common multi-wallet NFT question.
 
 This skill closes all of those gaps with the same style and structure as `pharos-skill-engine`, so Agents that already know how to use that skill can pick this one up with no friction.
 
@@ -59,8 +59,8 @@ You should see `pharos-nft-skill` in the list with a green checkmark.
 
 ## Prerequisites
 
-- **Foundry** (`cast`, `forge`) — `curl -L https://foundry.paradigm.xyz | bash && foundryup`
-- **jq** and **curl** — ship by default on macOS and Linux
+- **Foundry** (`cast`, `forge`): `curl -L https://foundry.paradigm.xyz | bash && foundryup`
+- **jq** and **curl**: ship by default on macOS and Linux
 
 No private key needed for any of the core read-only workflows. Private key is only required if you choose to deploy the optional demo fixtures under [`assets/fixtures/`](assets/fixtures/).
 
@@ -147,8 +147,8 @@ A non-empty `result` confirms the contract is deployed.
 
 ## License
 
-MIT-0 — free to use, modify, and redistribute. No attribution required. See [LICENSE](LICENSE).
+MIT-0: free to use, modify, and redistribute. No attribution required. See [LICENSE](LICENSE).
 
 ## Submission
 
-This skill was built for the [Pharos Agent Center — Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign). See [SUBMISSION.md](SUBMISSION.md) for the formal submission payload.
+This skill was built for the [Pharos Agent Center: Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign). See [SUBMISSION.md](SUBMISSION.md) for the formal submission payload.

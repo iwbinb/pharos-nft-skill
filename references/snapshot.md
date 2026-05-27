@@ -2,11 +2,11 @@
 
 This file documents the event-log primitives that power three high-value NFT workflows:
 
-1. **Full collection holder snapshot** at a specific block height — "who owns what right now (or at block N)?"
-2. **Wallet holdings enumeration via log scan** — the fallback path for collections that do not implement ERC-721 Enumerable.
-3. **TokenId transfer history reconstruction** — the chain of custody for one specific NFT.
+1. **Full collection holder snapshot** at a specific block height: "who owns what right now (or at block N)?"
+2. **Wallet holdings enumeration via log scan**: the fallback path for collections that do not implement ERC-721 Enumerable.
+3. **TokenId transfer history reconstruction**: the chain of custody for one specific NFT.
 
-A complementary section covers **wallet holdings diff** — purely a jq operation on top of two enumerations.
+A complementary section covers **wallet holdings diff**: purely a jq operation on top of two enumerations.
 
 All of these are read-only and never require a private key.
 
@@ -42,7 +42,7 @@ TransferSingle(address indexed operator, address indexed from, address indexed t
 TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
 ```
 
-`id` and `value(s)` are **not** indexed — they live in the data field. This means you cannot pre-filter by tokenId at the RPC layer; you must fetch the full window and filter client-side with jq.
+`id` and `value(s)` are **not** indexed: they live in the data field. This means you cannot pre-filter by tokenId at the RPC layer; you must fetch the full window and filter client-side with jq.
 
 ---
 
@@ -56,9 +56,9 @@ Reconstruct the complete holder map of a collection at block `N` by replaying ev
 2. Read `logScanMaxBlocks` from `networks.json` (call it `W`).
 3. Split the range `[deployBlock, snapshotBlock]` into chunks of width `W`.
 4. For each chunk, call `cast logs` against the Transfer signature, filtered by the collection address.
-5. Sort the combined event list by `(blockNumber, logIndex)` ascending — order matters because the same tokenId can transfer multiple times.
+5. Sort the combined event list by `(blockNumber, logIndex)` ascending: order matters because the same tokenId can transfer multiple times.
 6. For ERC-721: maintain `owner[tokenId] = to` updated in event order. After the replay, `owner[tokenId]` is the holder at `snapshotBlock`. Drop entries where `owner[tokenId] == 0x0` (burnt).
-7. For ERC-1155: maintain `balance[holder][tokenId]` — add `value` on `to`, subtract on `from`. After the replay, emit `(holder, tokenId, balance)` triples with `balance > 0`.
+7. For ERC-1155, maintain `balance[holder][tokenId]`. Add `value` on `to`, subtract on `from`. After the replay, emit `(holder, tokenId, balance)` triples with `balance > 0`.
 
 ### Command Template (ERC-721, single chunk)
 
@@ -122,7 +122,7 @@ cat chunk_*.json | jq -s '
 '
 ```
 
-Wrap that in a chunked driver script — see `assets/scripts/snapshot.sh` for the full reference implementation (the script is not required; everything above is reproducible from these templates alone).
+Wrap that in a chunked driver script: see `assets/scripts/snapshot.sh` for the full reference implementation (the script is not required; everything above is reproducible from these templates alone).
 
 ### Error Handling
 
@@ -135,7 +135,7 @@ Wrap that in a chunked driver script — see `assets/scripts/snapshot.sh` for th
 
 ### Agent Guidelines
 
-> Snapshots are computationally bounded by event volume, not collection size. A 10,000-supply collection with low velocity scans faster than a 100-supply collection that has churned 50,000 times. Cache results aggressively keyed by `(collection, snapshotBlock)` — they are immutable once produced. Always announce the snapshot block to the user; "current snapshot" without a block height is ambiguous on a live chain.
+> Snapshots are computationally bounded by event volume, not collection size. A 10,000-supply collection with low velocity scans faster than a 100-supply collection that has churned 50,000 times. Cache results aggressively keyed by `(collection, snapshotBlock)`: they are immutable once produced. Always announce the snapshot block to the user; "current snapshot" without a block height is ambiguous on a live chain.
 
 ---
 
@@ -192,7 +192,7 @@ cast logs ... --json | jq -s '
 
 ### Error Handling
 
-Same as Full Collection Snapshot. If no events are returned for a tokenId in a collection that does mint that tokenId, suspect a non-standard `Transfer` event or a non-indexed `tokenId` — fall back to scanning all events and filtering on the data field.
+Same as Full Collection Snapshot. If no events are returned for a tokenId in a collection that does mint that tokenId, suspect a non-standard `Transfer` event or a non-indexed `tokenId`: fall back to scanning all events and filtering on the data field.
 
 ### Agent Guidelines
 
@@ -200,15 +200,15 @@ Same as Full Collection Snapshot. If no events are returned for a tokenId in a c
 
 ---
 
-## Wallet Holdings — Log Scan Path
+## Wallet Holdings: Log Scan Path
 
 For collections that do not implement ERC-721 Enumerable, enumerate a wallet's current holdings by replaying Transfer events filtered on the wallet as either sender or receiver.
 
 ### Procedure
 
-1. Fetch events with `topic1 = wallet` (transfers OUT of the wallet) and `topic2 = wallet` (transfers IN to the wallet) — two scans.
+1. Fetch events with `topic1 = wallet` (transfers OUT of the wallet) and `topic2 = wallet` (transfers IN to the wallet): two scans.
 2. Combine, sort by `(blockNumber, logIndex)`.
-3. Maintain a running set `held: {tokenId}` — add on IN events, remove on OUT events.
+3. Maintain a running set `held` of tokenIds, adding on IN events and removing on OUT events.
 4. After replay, `held` is the wallet's current tokenIds.
 5. Verify with one Multicall3 batch of `ownerOf(tokenId)` to catch missed events from non-standard contracts.
 

@@ -1,6 +1,6 @@
 # Demo NFT Fixtures
 
-Two minimal NFT contracts useful for end-to-end testing of `pharos-nft-skill` against Pharos Atlantic testnet. They are not required to use the skill — point the skill at any existing collection — but they make for a fully reproducible demo when no public collection exists on a given network.
+Two minimal NFT contracts useful for end-to-end testing of `pharos-nft-skill` against Pharos Atlantic testnet. They are not required to use the skill (point the skill at any existing collection), but they make for a fully reproducible demo when no public collection exists on a given network.
 
 | Contract | Standard | Purpose |
 |----------|----------|---------|
@@ -64,7 +64,7 @@ Note the two contract addresses printed at the end. Append them to `../collectio
 }
 ```
 
-Update `deployBlock` with the actual block from the deploy receipt — it's used to bound the log-scan range in snapshot operations.
+Update `deployBlock` with the actual block from the deploy receipt: it's used to bound the log-scan range in snapshot operations.
 
 ## Generate Demo Data
 
@@ -87,12 +87,12 @@ cast send "$ERC1155" "airdrop(address[],uint256,uint256)" \
 
 ## Reset
 
-The fixtures are not upgradeable. To start over, deploy fresh instances and replace the addresses in `collections.json`. Old fixture addresses can be safely left in `collections.json` — they simply become inert (zero balances across the board).
+The fixtures are not upgradeable. To start over, deploy fresh instances and replace the addresses in `collections.json`. Old fixture addresses can be safely left in `collections.json`: they simply become inert (zero balances across the board).
 
 ## Faucet
 
-Atlantic testnet PHRS is required to deploy. Refer to the Pharos developer docs (`https://www.pharos.xyz`) for the current faucet endpoint and rate limit — the link changes periodically and is not embedded here to avoid documentation drift.
+Atlantic testnet PHRS is required to deploy. Refer to the Pharos developer docs (`https://www.pharos.xyz`) for the current faucet endpoint and rate limit: the link changes periodically and is not embedded here to avoid documentation drift.
 
 ## License
 
-MIT — see the top-level `LICENSE` file.
+MIT: see the top-level `LICENSE` file.

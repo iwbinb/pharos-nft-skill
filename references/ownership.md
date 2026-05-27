@@ -52,7 +52,7 @@ cast call <collection> "supportsInterface(bytes4)(bool)" <interfaceId> --rpc-url
 
 ### Agent Guidelines
 
-> When the user provides a collection address for the first time in a session, run standard detection before any other ownership operation. Persist the detected standard in memory for the rest of the session. If the collection is already registered in `assets/collections.json`, trust the `standard` field there and skip detection. Always probe ERC-721 Enumerable separately — many production collections implement ERC-721 but **not** Enumerable, which materially changes the holdings-enumeration strategy (Enumerable path vs log-scan path).
+> When the user provides a collection address for the first time in a session, run standard detection before any other ownership operation. Persist the detected standard in memory for the rest of the session. If the collection is already registered in `assets/collections.json`, trust the `standard` field there and skip detection. Always probe ERC-721 Enumerable separately: many production collections implement ERC-721 but **not** Enumerable, which materially changes the holdings-enumeration strategy (Enumerable path vs log-scan path).
 
 ---
 
@@ -78,7 +78,7 @@ cast call <collection> "balanceOf(address)(uint256)" <wallet> --rpc-url <rpc>
 
 - Returns a uint256 count of NFTs held.
 - `0` means the wallet holds none.
-- `>0` means the wallet holds at least that many tokens, but does **not** tell you which tokenIds — use the holdings enumeration commands below for that.
+- `>0` means the wallet holds at least that many tokens, but does **not** tell you which tokenIds: use the holdings enumeration commands below for that.
 
 ### Error Handling
 
@@ -125,7 +125,7 @@ cast call <collection> "ownerOf(uint256)(address)" <tokenId> --rpc-url <rpc>
 
 ### Agent Guidelines
 
-> After getting the owner, **always cross-check against `staking-proxies.json`**. If the owner is a known proxy and the user did not explicitly ask for the proxy address, append a clarifying line like: `tokenId N is held in staking proxy 0xPROXY — the beneficial owner is 0xUSER` so the result is actionable for gating/airdrop purposes. Also include block explorer links: tokenId page `<explorerUrl>/token/<collection>?a=<tokenId>` and owner page `<explorerUrl>/address/<owner>`.
+> After getting the owner, **always cross-check against `staking-proxies.json`**. If the owner is a known proxy and the user did not explicitly ask for the proxy address, append a clarifying line like: `tokenId N is held in staking proxy 0xPROXY: the beneficial owner is 0xUSER` so the result is actionable for gating/airdrop purposes. Also include block explorer links: tokenId page `<explorerUrl>/token/<collection>?a=<tokenId>` and owner page `<explorerUrl>/address/<owner>`.
 
 ---
 
@@ -139,7 +139,7 @@ ERC-1155 lets a single contract hold many distinct tokenIds, each with fungible-
 cast call <collection> "balanceOf(address,uint256)(uint256)" <wallet> <tokenId> --rpc-url <rpc>
 ```
 
-### Command Template (batch — same wallet, multiple tokenIds, or multiple wallets, same tokenId)
+### Command Template (batch: same wallet, multiple tokenIds, or multiple wallets, same tokenId)
 
 ERC-1155 defines a native batch query that takes parallel arrays of accounts and tokenIds.
 
@@ -173,11 +173,11 @@ For the batch variant, the two arrays must have equal length and are paired inde
 
 ### Agent Guidelines
 
-> Always prefer `balanceOfBatch` when the same operation needs to be repeated across more than two pairs — it is one RPC call instead of N. For cross-collection batches use the Multicall3 pattern in [`batch.md`](batch.md) instead.
+> Always prefer `balanceOfBatch` when the same operation needs to be repeated across more than two pairs: it is one RPC call instead of N. For cross-collection batches use the Multicall3 pattern in [`batch.md`](batch.md) instead.
 
 ---
 
-## Wallet Holdings — Enumerable Path
+## Wallet Holdings: Enumerable Path
 
 When the collection implements ERC-721 Enumerable (verify with the standard-detection step), the cheapest way to enumerate a wallet's tokenIds is `tokenOfOwnerByIndex(owner, index)` in a Multicall3 batch.
 
@@ -185,17 +185,17 @@ When the collection implements ERC-721 Enumerable (verify with the standard-dete
 
 1. Call `balanceOf(wallet)` to learn the count `N`.
 2. Build a Multicall3 `aggregate3` calldata containing N entries, each calling `tokenOfOwnerByIndex(wallet, i)` for `i` in `0..N-1`.
-3. Decode the returned uint256 array — those are the tokenIds owned by the wallet.
+3. Decode the returned uint256 array: those are the tokenIds owned by the wallet.
 
 ### Command Template
 
-Step 1 — balance:
+Step 1: balance:
 
 ```bash
 N=$(cast call <collection> "balanceOf(address)(uint256)" <wallet> --rpc-url <rpc>)
 ```
 
-Step 2 — assemble Multicall3 batch. Use the helper jq snippet to build the `aggregate3` parameter (`(address,bool,bytes)[]`):
+Step 2: assemble Multicall3 batch. Use the helper jq snippet to build the `aggregate3` parameter (`(address,bool,bytes)[]`):
 
 ```bash
 CALLS=$(jq -c -n --arg col "<collection>" --argjson n "$N" '
@@ -236,7 +236,7 @@ cast call $MC3 "aggregate3((address,bool,bytes)[])(((bool,bytes))[])" "[$TUPLES]
 
 ### Output Parsing
 
-The Multicall3 `aggregate3` return is an array of `(bool success, bytes returnData)`. For each entry, the `returnData` is the uint256 tokenId — decode with `cast --to-dec` after stripping leading zeros, or parse the raw bytes.
+The Multicall3 `aggregate3` return is an array of `(bool success, bytes returnData)`. For each entry, the `returnData` is the uint256 tokenId: decode with `cast --to-dec` after stripping leading zeros, or parse the raw bytes.
 
 ### Error Handling
 
@@ -251,7 +251,7 @@ The Multicall3 `aggregate3` return is an array of `(bool success, bytes returnDa
 
 ---
 
-## Wallet Holdings — Log Scan Path
+## Wallet Holdings: Log Scan Path
 
 For collections that do **not** implement ERC-721 Enumerable, enumerate a wallet's current holdings by scanning `Transfer` event logs. The full procedure lives in [`snapshot.md`](snapshot.md#wallet-holdings-log-scan-path); this section just links to it for navigation.
 
@@ -276,7 +276,7 @@ Real-world NFTs are often deposited into staking, escrow, or marketplace custody
 }
 ```
 
-`appliesTo` is optional — when absent, the resolver applies to any collection. When present, the resolver only applies when the underlying NFT belongs to one of the listed collections.
+`appliesTo` is optional: when absent, the resolver applies to any collection. When present, the resolver only applies when the underlying NFT belongs to one of the listed collections.
 
 ### Command Template
 
@@ -298,7 +298,7 @@ cast call <proxyAddress> "$RESOLVER" <tokenId> --rpc-url <rpc>
 
 ### Output Parsing
 
-Returns the real beneficial owner address. If the resolver itself reverts, the proxy may not actually be tracking this tokenId — report the raw proxy ownership to the user.
+Returns the real beneficial owner address. If the resolver itself reverts, the proxy may not actually be tracking this tokenId: report the raw proxy ownership to the user.
 
 ### Error Handling
 
@@ -309,11 +309,11 @@ Returns the real beneficial owner address. If the resolver itself reverts, the p
 
 ### Agent Guidelines
 
-> Resolution adds one RPC round trip per matched tokenId. For batch eligibility flows ([`eligibility.md`](eligibility.md)) this can be material — batch the resolver calls through Multicall3 instead of looping serially. After resolution succeeds, always display both the proxy and the real owner so the user understands the chain of custody.
+> Resolution adds one RPC round trip per matched tokenId. For batch eligibility flows ([`eligibility.md`](eligibility.md)) this can be material: batch the resolver calls through Multicall3 instead of looping serially. After resolution succeeds, always display both the proxy and the real owner so the user understands the chain of custody.
 
 ---
 
-## End-to-End Example — Atlantic Testnet
+## End-to-End Example: Atlantic Testnet
 
 The following session shows a complete read-only ownership flow against the Pharos Atlantic testnet. Run from the skill's installation directory.
 

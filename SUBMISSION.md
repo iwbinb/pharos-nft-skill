@@ -17,13 +17,13 @@ Per the campaign rules ("submission details need to be in one message as a whole
 **Instructions on how to use the Skill**:
 1. Install Foundry: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
 2. Install the skill: `npx skills add https://github.com/<YOUR-GH-USERNAME>/pharos-nft-skill`
-3. Verify in Claude Code: type `/skills` — `pharos-nft-skill` should appear with a green checkmark
-4. Use natural language: "does wallet 0xabc... own any NFTs in collection 0xdef... on Pharos testnet?" — the skill triggers automatically on NFT-related Pharos questions and generates the appropriate cast / forge commands.
+3. Verify in Claude Code: type `/skills`: `pharos-nft-skill` should appear with a green checkmark
+4. Use natural language: "does wallet 0xabc... own any NFTs in collection 0xdef... on Pharos testnet?". The skill triggers automatically on NFT-related Pharos questions and generates the appropriate cast / forge commands.
 
 **Supported framework**: Claude Code, OpenClaw, Codex (any Agent runtime that reads `~/.claude/skills/` or equivalent and supports the SKILL.md frontmatter format used by pharos-skill-engine).
 
 **Additional notes / dependencies**:
-- Dependencies: Foundry (`cast`, `forge`), `jq`, `curl` — all listed in `requires.anyBins` in SKILL.md frontmatter
+- Dependencies: Foundry (`cast`, `forge`), `jq`, `curl`. All listed in `requires.anyBins` in SKILL.md frontmatter
 - Multicall3 is assumed to be at the canonical address `0xcA11bde05977b3631167028862bE2a173976CA11`; verified live on Atlantic testnet (eth_getCode returned a non-empty result on May 27, 2026)
 - Networks: Atlantic testnet (default) and mainnet; same `networks.json` shape as pharos-skill-engine
 - Read-first design: no private key is required for any core workflow (ownership, snapshot, history, eligibility, metadata)
@@ -37,7 +37,7 @@ Per the campaign rules ("submission details need to be in one message as a whole
 1. Replace `<YOUR-GH-USERNAME>` with the actual GitHub org / user where the repo is pushed.
 2. Replace the demo video reference with a real link (Loom, YouTube unlisted, or repo-hosted MP4) **after recording**.
 3. Paste the entire payload above (between the two `---` lines) as ONE message in `#skill-submission` on https://discord.com/invite/pharos.
-4. Do not split across multiple messages — the campaign rules require a single message.
+4. Do not split across multiple messages: the campaign rules require a single message.
 
 ## Optional: PR to PharosNetwork/pharos-skill-engine
 
