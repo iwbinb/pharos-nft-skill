@@ -43,9 +43,11 @@ Pick the entry that matches your Agent:
 
 | Agent | Install Command |
 |-------|-----------------|
-| Claude Code | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
-| OpenClaw | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
-| Codex | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
+| Claude Code | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+| OpenClaw | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+| Codex | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+
+The `-g` flag forces a global (user-level) install at `~/.agents/skills/` with symlinks into each agent's skill directory (e.g. `~/.claude/skills/pharos-nft-skill` for Claude Code). Omit `-g` if you want a project-local install at `./.agents/skills/` instead, which keeps the skill scoped to the current project.
 
 After installation, verify it loaded:
 

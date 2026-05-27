@@ -21,6 +21,10 @@ holdings/
 # Test runner output (logs, extracted bash blocks, scratch fixtures)
 tests/_out/
 
+# `skills add` artifacts when run from inside this directory
+.agents/
+skills-lock.json
+
 # Local environment
 .env
 .env.local

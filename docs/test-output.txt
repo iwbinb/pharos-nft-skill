@@ -1,0 +1,42 @@
+============================================================
+pharos-nft-skill test suite output
+Date: 2026-05-27 06:46:04 UTC
+Repo: https://github.com/iwbinb/pharos-nft-skill
+Ran from installed location: ~/.claude/skills/pharos-nft-skill/
+============================================================
+
+## tests/run.sh --with-live
+
+
+=== suite: lint ===
+  [00-no-dashes] OK
+  [01-json-valid] OK
+  [02-frontmatter] OK
+  [03-md-links] OK
+  [04-anchors] OK
+  [05-bash-syntax] OK
+
+=== suite: jq ===
+  [01-evaluator] OK
+  [02-doc-evaluator-matches] OK
+  [03-trait-match] OK
+  [04-holdings-diff] OK
+
+=== suite: live ===
+  [00-rpc-reachable] OK
+  [01-multicall3-deployed] OK
+  [02-aggregate3-empty] OK
+  [03-eth-call-balanceof] OK
+  [04-getlogs-window] OK
+  [05-aggregate3-real-call] OK
+
+================================
+  16 passed, 0 failed
+================================
+
+## Versions
+
+bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+jq:   jq-1.7.1-apple
+curl: curl 8.7.1 (x86_64-apple-darwin25.0) libcurl/8.7.1 (SecureTransport) LibreSSL/3.3.6 zlib/1.2.12 nghttp2/1.68.1
+python3: Python 3.14.4

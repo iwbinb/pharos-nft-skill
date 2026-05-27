@@ -45,9 +45,11 @@
 
 | Agent | 安装 |
 |---|---|
-| Claude Code | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
-| OpenClaw | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
-| Codex | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
+| Claude Code | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+| OpenClaw | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+| Codex | `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` |
+
+加 `-g` 是全局安装（落到 `~/.agents/skills/` 并 symlink 进各 Agent 的 skill 目录，比如 Claude Code 的 `~/.claude/skills/pharos-nft-skill`）。去掉 `-g` 就装到当前项目的 `./.agents/skills/`，仅本项目可见。
 
 装完之后验证：
 

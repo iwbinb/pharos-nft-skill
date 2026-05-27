@@ -12,12 +12,14 @@ Per the campaign rules ("submission details need to be in one message as a whole
 
 **Email Address**: iwbinb@gmail.com
 
-**Demo link / video / screenshots**: See README.md and references/*.md for end-to-end examples. A walkthrough video is included at /docs/demo.mp4 in the repo (record after deploying fixtures to Atlantic testnet).
+**Demo link / video / screenshots**: Live evidence committed to the repo under `docs/`:
+- `docs/install-and-test.txt`: full transcript of `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` followed by an `ls` of the resulting `~/.claude/skills/pharos-nft-skill/` directory, confirming the skill installs end-to-end into Claude Code's skill registry.
+- `docs/test-output.txt`: complete `tests/run.sh --with-live` output run from the installed location, 16/16 passing. Includes lint, jq evaluator, and live Pharos Atlantic testnet RPC checks (Multicall3 deployed at canonical address, `eth_call balanceOf`, `eth_getLogs` window, hand-encoded `aggregate3` with one sub-call).
 
 **Instructions on how to use the Skill**:
 1. Install Foundry: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
-2. Install the skill: `npx skills add https://github.com/iwbinb/pharos-nft-skill`
-3. Verify in Claude Code: type `/skills`: `pharos-nft-skill` should appear with a green checkmark
+2. Install the skill globally: `npx skills add https://github.com/iwbinb/pharos-nft-skill -g --yes` (omit `-g` for project-local install)
+3. Verify in Claude Code: type `/skills`. `pharos-nft-skill` should appear with a green checkmark
 4. Use natural language: "does wallet 0xabc... own any NFTs in collection 0xdef... on Pharos testnet?". The skill triggers automatically on NFT-related Pharos questions and generates the appropriate cast / forge commands.
 
 **Supported framework**: Claude Code, OpenClaw, Codex (any Agent runtime that reads `~/.claude/skills/` or equivalent and supports the SKILL.md frontmatter format used by pharos-skill-engine).
@@ -35,7 +37,7 @@ Per the campaign rules ("submission details need to be in one message as a whole
 ## How to send
 
 1. GitHub username is already set to `iwbinb`. Adjust if pushing to a different account.
-2. Replace the demo video reference with a real link (Loom, YouTube unlisted, or repo-hosted MP4) **after recording**.
+2. Optional: add a Loom or YouTube walkthrough link on top of the committed `docs/` transcripts.
 3. Paste the entire payload above (between the two `---` lines) as ONE message in `#skill-submission` on https://discord.com/invite/pharos.
 4. Do not split across multiple messages: the campaign rules require a single message.
 

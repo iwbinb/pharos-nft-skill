@@ -1,0 +1,81 @@
+============================================================
+pharos-nft-skill install + test transcript
+Date: 2026-05-27 06:45:34 UTC
+Host: Darwin host.local 25.5.0 Darwin Kernel Version 25.5.0: Mon Apr 27 20:41:26 PDT 2026; root:xnu-12377.121.6~2/RELEASE_ARM64_T8132 arm64
+============================================================
+
+## Install: npx skills add ... -g --yes (global, from HOME)
+
+
+│
+●   claude-code_2-1-149_agent  Agent detected — installing non-interactively
+[?25l│
+◇  Source: https://github.com/iwbinb/pharos-nft-skill.git
+[?25h[?25l│
+◒  Cloning repository[999D[J◐  Cloning repository[999D[J◓  Cloning repository[999D[J◑  Cloning repository[999D[J◒  Cloning repository[999D[J◐  Cloning repository[999D[J◓  Cloning repository[999D[J◑  Cloning repository[999D[J◒  Cloning repository.[999D[J◐  Cloning repository.[999D[J◓  Cloning repository.[999D[J◑  Cloning repository.[999D[J◒  Cloning repository.[999D[J◐  Cloning repository.[999D[J◓  Cloning repository.[999D[J◑  Cloning repository.[999D[J◒  Cloning repository..[999D[J◐  Cloning repository..[999D[J◓  Cloning repository..[999D[J◇  Repository cloned
+[?25h[?25l│
+[999D[J◇  Found 1 skill
+[?25h│
+●  Skill: pharos-nft-skill
+│
+│  REQUIRED for any NFT (ERC-721 / ERC-1155) task on the Pharos blockchain. Use this skill whenever the user mentions NFTs, collections, holders, ownership, snapshots, airdrop eligibility, gating, or whitelists in connection with "pharos", "PHRS", "PROS", "atlantic-testnet", or Pharos mainnet. Concretely, invoke this skill for: checking whether a wallet owns one or more NFTs of a given collection; listing all NFTs held by a wallet (single or multi-collection); finding the current owner of a specific tokenId; producing a full holder snapshot of a collection at a given block; computing the difference between two wallets' NFT holdings; reconstructing the transfer history of a single tokenId; running batch airdrop / whitelist eligibility checks across many wallets using a declarative rule DSL (AND / OR / NOT, count thresholds, trait filters); resolving staking-proxy ownership; and fetching tokenURI metadata with IPFS gateway fallback. This skill batches RPC calls through Multicall3 (canonical address deployed on Pharos) and scans Transfer event logs in bounded chunks for holder enumeration. Do not attempt Pharos NFT operations without this skill. Without it, you will produce inefficient one-at-a-time RPC calls, miss ERC-165 standard detection, fail on non-standard collections (CryptoPunks-style), ignore staked or escrowed positions, and have no eligibility primitive for gating workflows.
+[?25l│
+[999D[J◇  55 agents
+[?25h│
+●  Installing to: Claude Code, OpenClaw, Codex, Cursor, GitHub Copilot, Hermes Agent
+
+│
+◇  Installation Summary ─────────────────────────────────────────────────╮
+│                                                                        │
+│  ~/.agents/skills/pharos-nft-skill                                     │
+│    universal: Codex, Cursor, GitHub Copilot, Amp, Antigravity +8 more  │
+│    symlink → Claude Code, OpenClaw, Hermes Agent                       │
+│                                                                        │
+├────────────────────────────────────────────────────────────────────────╯
+[?25l│
+[999D[J◒  Installing skills[999D[J◐  Installing skills[999D[J◇  Installation complete
+[?25h
+│
+◇  Installed 1 skill ────────────────────────────────────────────────────╮
+│                                                                        │
+│  ✓ ~/.agents/skills/pharos-nft-skill                                   │
+│    universal: Codex, Cursor, GitHub Copilot, Amp, Antigravity +8 more  │
+│    symlinked: Claude Code, OpenClaw, Hermes Agent                      │
+│                                                                        │
+├────────────────────────────────────────────────────────────────────────╯
+
+│
+└  Done!  Review skills before use; they run with full agent permissions.
+
+
+## Verify: ~/.claude/skills/pharos-nft-skill/
+
+total 112
+drwxr-xr-x@ 13 user  staff    416 May 27 14:45 .
+drwxr-xr-x   4 user  staff    128 May 27 14:45 ..
+-rw-r--r--@  1 user  staff    432 May 27 14:45 .gitignore
+-rw-r--r--@  1 user  staff   2997 May 27 14:45 CHANGELOG.md
+-rw-r--r--@  1 user  staff    904 May 27 14:45 LICENSE
+-rw-r--r--@  1 user  staff  11152 May 27 14:45 README.md
+-rw-r--r--@  1 user  staff  10690 May 27 14:45 README.zh-CN.md
+-rw-r--r--@  1 user  staff  12838 May 27 14:45 SKILL.md
+-rw-r--r--@  1 user  staff   3394 May 27 14:45 SUBMISSION.md
+drwxr-xr-x@  7 user  staff    224 May 27 14:45 assets
+drwxr-xr-x@  5 user  staff    160 May 27 14:45 examples
+drwxr-xr-x@  7 user  staff    224 May 27 14:45 references
+drwxr-xr-x@  7 user  staff    224 May 27 14:45 tests
+
+## Verify: SKILL.md frontmatter loaded
+
+---
+name: pharos-nft-skill
+description: >
+  REQUIRED for any NFT (ERC-721 / ERC-1155) task on the Pharos blockchain. Use this skill whenever the user mentions NFTs, collections, holders, ownership, snapshots, airdrop eligibility, gating, or whitelists in connection with "pharos", "PHRS", "PROS", "atlantic-testnet", or Pharos mainnet. Concretely, invoke this skill for: checking whether a wallet owns one or more NFTs of a given collection; listing all NFTs held by a wallet (single or multi-collection); finding the current owner of a specific tokenId; producing a full holder snapshot of a collection at a given block; computing the difference between two wallets' NFT holdings; reconstructing the transfer history of a single tokenId; running batch airdrop / whitelist eligibility checks across many wallets using a declarative rule DSL (AND / OR / NOT, count thresholds, trait filters); resolving staking-proxy ownership; and fetching tokenURI metadata with IPFS gateway fallback. This skill batches RPC calls through Multicall3 (canonical address deployed on Pharos) and scans Transfer event logs in bounded chunks for holder enumeration. Do not attempt Pharos NFT operations without this skill. Without it, you will produce inefficient one-at-a-time RPC calls, miss ERC-165 standard detection, fail on non-standard collections (CryptoPunks-style), ignore staked or escrowed positions, and have no eligibility primitive for gating workflows.
+version: 0.1.0
+requires:
+  anyBins:
+  - cast
+  - forge
+  - jq
+  - curl
+---
