@@ -56,7 +56,7 @@ Reconstruct the complete holder map of a collection at block `N` by replaying ev
 2. Read `logScanMaxBlocks` from `networks.json` (call it `W`).
 3. Split the range `[deployBlock, snapshotBlock]` into chunks of width `W`.
 4. For each chunk, call `cast logs` against the Transfer signature, filtered by the collection address.
-5. Sort the combined event list by `(blockNumber, logIndex)` ascending: order matters because the same tokenId can transfer multiple times.
+5. Concatenate the chunk outputs in chunk order. `cast logs` returns events in chronological order within each chunk, so as long as chunks are processed in ascending block order, the concatenated stream is already chronological. Do not sort client-side: cross-version differences in how cast encodes blockNumber (hex string vs decimal number) make a portable sort painful and adds no information.
 6. For ERC-721: maintain `owner[tokenId] = to` updated in event order. After the replay, `owner[tokenId]` is the holder at `snapshotBlock`. Drop entries where `owner[tokenId] == 0x0` (burnt).
 7. For ERC-1155, maintain `balance[holder][tokenId]`. Add `value` on `to`, subtract on `from`. After the replay, emit `(holder, tokenId, balance)` triples with `balance > 0`.
 
@@ -109,17 +109,29 @@ cast logs "Transfer(address,address,uint256)" \
 Fold with jq:
 
 ```bash
-# Concatenate chunks, sort by block and logIndex, fold into owner map
+# Concatenate chunks (chunks come from cast logs in chronological order, so we keep that
+# order rather than re-sorting client-side; blockNumber may be hex or decimal across cast
+# versions, and trusting RPC order avoids that). Fold into the owner map.
 cat chunk_*.json | jq -s '
   flatten
-  | sort_by([.blockNumber | tonumber, .logIndex | tonumber])
   | reduce .[] as $e ({};
-      ($e.topics[3] | tonumber) as $tid
+      $e.topics[3] as $tid_hex
       | ($e.topics[2] | sub("^0x0+"; "0x")) as $to
-      | .[$tid | tostring] = $to
+      | .[$tid_hex] = $to
     )
   | with_entries(select(.value != "0x0000000000000000000000000000000000000000"))
 '
+```
+
+The resulting object maps tokenId (as a 32-byte hex topic key) to the current owner address. To convert keys to decimal tokenIds for display, pipe the result through a hex-to-decimal helper. Define it once and reuse:
+
+```bash
+# skip-lint
+# Hex-to-decimal jq helper. Embed at the top of any pipeline that needs decimal tokenIds.
+HEX2DEC='ltrimstr("0x") | explode | reduce .[] as $c (0; . * 16 + (if $c < 58 then $c - 48 elif $c < 71 then $c - 55 else $c - 87 end)) | tostring'
+
+# Apply to the holders object emitted above
+echo "$HOLDERS_JSON" | jq --arg conv "$HEX2DEC" "with_entries(.key |= ($conv))"
 ```
 
 Wrap that in a chunked driver script: see `assets/scripts/snapshot.sh` for the full reference implementation (the script is not required; everything above is reproducible from these templates alone).
@@ -153,7 +165,7 @@ COLLECTION=0xCOLLECTION
 TOKEN_ID=42
 
 # Encode tokenId as a 32-byte topic
-TOKEN_TOPIC=$(cast --to-uint256 $TOKEN_ID)
+TOKEN_TOPIC=$(cast to-uint256 $TOKEN_ID)
 
 cast logs "Transfer(address,address,uint256)" \
   --from-block 0 --to-block latest \
@@ -178,17 +190,18 @@ The three positional arguments after the signature are topic1, topic2, topic3 fi
 A chronologically sorted list of Transfer events, one per change of ownership. Pair adjacent events to derive `(blockNumber, from, to, txHash)` rows. The first event with `from = 0x0` is the mint.
 
 ```bash
-cast logs ... --json | jq -s '
-  sort_by([.[0].blockNumber | tonumber, .[0].logIndex | tonumber])
-  | .[]
+cast logs ... --json | jq '
+  .[]
   | {
-      block: (.blockNumber | tonumber),
-      from: (.topics[1] | sub("^0x0+"; "0x")),
-      to:   (.topics[2] | sub("^0x0+"; "0x")),
-      tx:   .transactionHash
+      block: .blockNumber,
+      from:  (.topics[1] | sub("^0x0+"; "0x")),
+      to:    (.topics[2] | sub("^0x0+"; "0x")),
+      tx:    .transactionHash
     }
 '
 ```
+
+`cast logs --json` returns events in chronological order across blocks and within a block, so client-side sorting is unnecessary. `block` is left in whatever encoding `cast` emits (hex string on older cast, decimal number on newer cast); display layers can convert as needed.
 
 ### Error Handling
 
@@ -217,7 +230,7 @@ For collections that do not implement ERC-721 Enumerable, enumerate a wallet's c
 ```bash
 COLLECTION=0xCOLLECTION
 WALLET=0xUSER
-WALLET_TOPIC=$(cast --to-uint256 "$WALLET")   # left-pad to 32 bytes
+WALLET_TOPIC=$(cast to-uint256 "$WALLET")   # left-pad to 32 bytes
 
 # Events where wallet was the recipient
 cast logs "Transfer(address,address,uint256)" \
@@ -234,16 +247,15 @@ cast logs "Transfer(address,address,uint256)" \
   --rpc-url "$RPC" --json > out.json
 ```
 
-Fold with jq:
+Fold with jq. Each input file is already chronologically ordered, so we just merge and replay in stream order:
 
 ```bash
-jq -s '
+jq -s --arg wallet "$WALLET" '
   (.[0] + .[1])
-  | sort_by([.blockNumber | tonumber, .logIndex | tonumber])
   | reduce .[] as $e ({};
-      ($e.topics[3]) as $tid
+      $e.topics[3] as $tid
       | ($e.topics[2] | sub("^0x0+"; "0x")) as $to
-      | if ($to | ascii_downcase) == ("'"$WALLET"'" | ascii_downcase)
+      | if ($to | ascii_downcase) == ($wallet | ascii_downcase)
         then .[$tid] = true
         else del(.[$tid])
         end
@@ -251,6 +263,8 @@ jq -s '
   | keys
 ' in.json out.json
 ```
+
+The output is an array of tokenId hex topics currently held by the wallet. Convert to decimal tokenIds for display using the same hex-to-decimal helper as in the full-snapshot section.
 
 ### Error Handling
 

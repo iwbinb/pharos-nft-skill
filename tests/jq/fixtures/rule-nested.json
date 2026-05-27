@@ -1,0 +1,17 @@
+{
+  "_comment": "Eligible iff (holds in collection A) AND ((holds 2+ in B) OR (holds 1+ in D)) AND (does not hold in C).",
+  "all_of": [
+    { "min_count": { "collection": "0x000000000000000000000000000000000000aaaa", "n": 1 } },
+    {
+      "any_of": [
+        { "min_count": { "collection": "0x000000000000000000000000000000000000bbbb", "n": 2 } },
+        { "min_count": { "collection": "0x000000000000000000000000000000000000dddd", "n": 1 } }
+      ]
+    },
+    {
+      "none_of": [
+        { "min_count": { "collection": "0x000000000000000000000000000000000000cccc", "n": 1 } }
+      ]
+    }
+  ]
+}

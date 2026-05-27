@@ -106,6 +106,12 @@ pharos-nft-skill/
 ├── examples/                       # Worked examples and sample rule DSL inputs
 │   ├── rule-airdrop-example.json
 │   └── rule-gating-example.json
+├── tests/                          # Test suite: lint + jq + live RPC smoke tests
+│   ├── lint/                       # em/en-dash, JSON, frontmatter, links, anchors, bash -n
+│   ├── jq/                         # eligibility DSL evaluator + helpers + fixtures
+│   ├── live/                       # live Pharos Atlantic testnet smoke tests
+│   ├── run.sh                      # top-level runner
+│   └── README.md
 ├── LICENSE                         # MIT-0
 ├── README.md                       # this file
 └── SUBMISSION.md                   # Discord submission message draft
@@ -121,6 +127,26 @@ This skill is opinionated about a handful of things that matter when running NFT
 4. **Bounded event scans**. `eth_getLogs` ranges chunked to `logScanMaxBlocks` (default 10,000) to stay inside RPC limits, never assuming an unlimited range.
 5. **Graceful degradation on metadata**. Eligibility checks complete even when IPFS gateways time out; metadata is treated as optional context, never a blocker.
 6. **One declarative DSL for all eligibility logic**. A 4-node rule schema (`all_of` / `any_of` / `none_of` / `min_count`) covers every airdrop snapshot, whitelist, and gating use case we've seen.
+
+## Testing
+
+The repo ships a self-contained test suite that needs only bash, `jq`, `python3`, and `curl` (no Node, no Foundry, no compiler). See [tests/README.md](tests/README.md) for the full description.
+
+```bash
+# Lint + jq (no network)
+bash tests/run.sh
+
+# Lint + jq + live RPC against Pharos Atlantic testnet
+bash tests/run.sh --with-live
+```
+
+Three suites, 16 tests:
+
+- **lint** (6 tests): em/en-dash forbid, JSON validity, frontmatter shape, markdown link resolution, anchor resolution, and `bash -n` syntax check on every fenced code block in the docs.
+- **jq** (4 tests): 15 fixture cases of the eligibility-DSL evaluator (AND / OR / NOT / nested), 8 trait-match cases, holdings-diff verification, doc-evaluator drift check.
+- **live** (6 tests, requires `--with-live`): RPC reachability, Multicall3 bytecode presence, `aggregate3([])` round trip, `eth_call balanceOf` shape, `eth_getLogs` shape, and a hand-encoded `aggregate3` single-call sanity check.
+
+A real bug surfaced in the eligibility DSL evaluator during the first run of the jq suite (filter-parameter vs value-parameter confusion in jq's `def f(r; h)` syntax, which caused recursive lookups to evaluate against the wrong `.`). The fix is documented inline in `references/eligibility.md` so future readers do not re-introduce it.
 
 ## Composing With pharos-skill-engine
 

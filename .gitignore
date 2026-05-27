@@ -18,6 +18,9 @@ Thumbs.db
 # Holdings cache produced by eligibility runs (per-user, never committed)
 holdings/
 
+# Test runner output (logs, extracted bash blocks, scratch fixtures)
+tests/_out/
+
 # Local environment
 .env
 .env.local

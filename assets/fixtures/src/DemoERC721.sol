@@ -35,4 +35,30 @@ contract DemoERC721 is ERC721Enumerable, Ownable {
     function _baseURI() internal view override returns (string memory) {
         return _baseTokenURI;
     }
+
+    // OpenZeppelin v5 requires both ERC721 and ERC721Enumerable parents to resolve
+    // the diamond on these two hooks.
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Enumerable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(address account, uint128 value)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._increaseBalance(account, value);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
 }

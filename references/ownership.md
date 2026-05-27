@@ -189,40 +189,44 @@ When the collection implements ERC-721 Enumerable (verify with the standard-dete
 
 ### Command Template
 
-Step 1: balance:
+Step 1, learn the count:
 
 ```bash
 N=$(cast call <collection> "balanceOf(address)(uint256)" <wallet> --rpc-url <rpc>)
 ```
 
-Step 2: assemble Multicall3 batch. Use the helper jq snippet to build the `aggregate3` parameter (`(address,bool,bytes)[]`):
+Step 2, build a Multicall3 batch of N `tokenOfOwnerByIndex` calls and execute it in one round trip:
 
 ```bash
-CALLS=$(jq -c -n --arg col "<collection>" --argjson n "$N" '
-  [range(0; $n) | {target: $col, allowFailure: false, callData: ("0x2f745c59" + (. * (16^64) | tostring | "0x" + .))}]
-')
-# Simpler: build the array with `cast abi-encode` per item, joined with seq.
-TOKENIDS=()
+SKILL_DIR=~/.claude/skills/pharos-nft-skill
+NET=atlantic-testnet
+MC3=$(jq -r --arg n "$NET" '.deployedOn[$n]' "$SKILL_DIR/assets/multicall.json")
+
+# Build the (address,bool,bytes)[] tuple-array literal by looping
+CALLS=""
 for i in $(seq 0 $((N-1))); do
-  TOKENIDS+=("$(cast call <collection> "tokenOfOwnerByIndex(address,uint256)(uint256)" <wallet> $i --rpc-url <rpc>)")
+  CD=$(cast calldata 'tokenOfOwnerByIndex(address,uint256)' <wallet> "$i")
+  if [ -z "$CALLS" ]; then
+    CALLS="(<collection>,false,$CD)"
+  else
+    CALLS="${CALLS},(<collection>,false,$CD)"
+  fi
 done
+
+# Execute the batch
+cast call "$MC3" \
+  "aggregate3((address,bool,bytes)[])((bool,bytes)[])" \
+  "[$CALLS]" \
+  --rpc-url <rpc>
 ```
 
-The recommended pattern is to invoke Multicall3 via `cast` directly:
+The serial fallback (one `cast call` per index) is acceptable only for `N <= 3`; for anything larger the Multicall3 form above is materially faster and avoids rate-limit pressure:
 
 ```bash
-# Encode each tokenOfOwnerByIndex call
-CALLDATAS=()
+# Serial fallback for tiny N. Do NOT use for N > 3.
 for i in $(seq 0 $((N-1))); do
-  CALLDATAS+=("$(cast calldata 'tokenOfOwnerByIndex(address,uint256)' <wallet> $i)")
+  cast call <collection> "tokenOfOwnerByIndex(address,uint256)(uint256)" <wallet> "$i" --rpc-url <rpc>
 done
-
-# Build the (address,bool,bytes)[] tuple array
-TUPLES=$(printf '(%s,false,%s),' "<collection>" "${CALLDATAS[@]}" | sed 's/.$//')
-MC3=$(jq -r --arg n "$NET" '.deployedOn[$n]' assets/multicall.json)
-
-# Call Multicall3
-cast call $MC3 "aggregate3((address,bool,bytes)[])(((bool,bytes))[])" "[$TUPLES]" --rpc-url <rpc>
 ```
 
 ### Parameters

@@ -50,18 +50,23 @@ echo "$RAW"
 
 ### Output Parsing
 
-`aggregate3` returns `((bool,bytes))[]`. Each element corresponds positionally to the input `Call3`. Decode each `returnData` according to the underlying function's return type.
+`aggregate3` returns `(bool,bytes)[]`. Each element corresponds positionally to the input `Call3`. Decode each `returnData` according to the underlying function's return type.
 
-Example: a batch of 3 `balanceOf(address)(uint256)` calls returns three `(true, 0x000...001)` tuples; strip the wrapper and `cast --to-dec` each `returnData` to get the uint256.
+Example: a batch of 3 `balanceOf(address)(uint256)` calls returns three `(true, 0x000...001)` tuples; strip the wrapper and convert each `returnData` to a decimal uint256.
 
 A practical helper:
 
 ```bash
-# Re-cast the raw output as separate uint256 values, assuming all sub-calls returned uint256
-echo "$RAW" | cast abi-decode "((bool,bytes))[]" | \
-  jq -r '.[] | .[1]' | \
-  while read -r hex; do
-    cast --to-dec "$hex"
+# Decode the raw aggregate3 return into per-call (success, returnData) rows.
+# Note: cast abi-decode requires a function-shape signature.
+echo "$RAW" | cast abi-decode 'aggregate3()((bool,bytes)[])' | \
+  jq -r '.[] | "\(.[0])\t\(.[1])"' | \
+  while IFS=$'\t' read -r ok hex; do
+    if [ "$ok" = "true" ]; then
+      cast to-dec "$hex"
+    else
+      echo "REVERTED"
+    fi
   done
 ```
 

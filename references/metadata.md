@@ -90,7 +90,10 @@ fetch_ipfs() {
   local PIDS=()
   for GW in "${GATEWAYS[@]}"; do
     (
-      curl -fsSL --max-time 2 "$GW/$PATH_PART" -o "$TMP/$(echo "$GW" | md5sum | cut -c1-8).json"
+      # Use a hash of the gateway name as a unique filename. md5sum is GNU coreutils;
+      # md5 is the BSD/macOS equivalent. Try GNU first, fall back to BSD.
+      HASH=$(echo "$GW" | { md5sum 2>/dev/null || md5; } | awk '{print $1}' | cut -c1-8)
+      curl -fsSL --max-time 2 "$GW/$PATH_PART" -o "$TMP/$HASH.json"
     ) &
     PIDS+=($!)
   done

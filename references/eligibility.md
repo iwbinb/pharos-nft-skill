@@ -123,19 +123,18 @@ HOLDINGS_FILE="holdings/${WALLET}.json"
 RULE_FILE=rule.json
 
 jq -n --slurpfile rule "$RULE_FILE" --slurpfile holdings "$HOLDINGS_FILE" '
+  # IMPORTANT: jq function parameters are *filters*, not values. Recursive lookups like
+  # r.min_count.n re-evaluate r against whatever . happens to be at that point in the
+  # pipeline (often not the rule object). Bind r and h to $r/$h up front so every
+  # reference inside the body is a stable value, not a filter.
   def evalRule(r; h):
-    if r | has("all_of") then
-      (r.all_of | all(evalRule(.; h)))
-    elif r | has("any_of") then
-      (r.any_of | any(evalRule(.; h)))
-    elif r | has("none_of") then
-      (r.none_of | all(evalRule(.; h)) | not)
-    elif r | has("min_count") then
-      (h[r.min_count.collection] // [])
-      | length >= r.min_count.n
-    else
-      error("invalid rule node: \(r | keys)")
-    end;
+    r as $r | h as $h
+    | if   $r | has("all_of")  then ($r.all_of  | map(evalRule(.; $h)) | all)
+      elif $r | has("any_of")  then ($r.any_of  | map(evalRule(.; $h)) | any)
+      elif $r | has("none_of") then ($r.none_of | map(evalRule(.; $h)) | any | not)
+      elif $r | has("min_count")
+        then ($r.min_count as $mc | ($h[$mc.collection] // []) | length >= $mc.n)
+      else error("invalid rule node: \($r | keys)") end;
   evalRule($rule[0]; $holdings[0])
 '
 ```
@@ -182,11 +181,13 @@ COLLECTIONS=$(jq -c '[.. | objects | select(has("min_count")) | .min_count.colle
 while IFS= read -r WALLET; do
   RESULT=$(jq -n --slurpfile rule "$RULE_FILE" --slurpfile h "holdings/${WALLET}.json" '
     def evalRule(r; h):
-      if r | has("all_of") then (r.all_of | all(evalRule(.; h)))
-      elif r | has("any_of") then (r.any_of | any(evalRule(.; h)))
-      elif r | has("none_of") then (r.none_of | all(evalRule(.; h)) | not)
-      elif r | has("min_count") then ((h[r.min_count.collection] // []) | length >= r.min_count.n)
-      else error("invalid rule node") end;
+      r as $r | h as $h
+      | if   $r | has("all_of")  then ($r.all_of  | map(evalRule(.; $h)) | all)
+        elif $r | has("any_of")  then ($r.any_of  | map(evalRule(.; $h)) | any)
+        elif $r | has("none_of") then ($r.none_of | map(evalRule(.; $h)) | any | not)
+        elif $r | has("min_count")
+          then ($r.min_count as $mc | ($h[$mc.collection] // []) | length >= $mc.n)
+        else error("invalid rule node") end;
     evalRule($rule[0]; $h[0])
   ')
   echo "$WALLET $RESULT"
