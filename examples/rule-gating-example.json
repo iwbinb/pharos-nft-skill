@@ -1,0 +1,22 @@
+{
+  "_comment": "Sample gating rule with trait filter. Grant access to wallets that either (a) hold a Founder-tier Access NFT, or (b) hold at least 5 Genesis NFTs AND no Blacklist NFT.",
+  "_network": "atlantic-testnet",
+  "any_of": [
+    {
+      "min_count": {
+        "collection": "0x0000000000000000000000000000000000000000aaaa",
+        "n": 1,
+        "traits": { "tier": "founder" }
+      }
+    },
+    {
+      "all_of": [
+        { "min_count": { "collection": "0x0000000000000000000000000000000000000000bbbb", "n": 5 } },
+        { "none_of": [
+            { "min_count": { "collection": "0x0000000000000000000000000000000000000000cccc", "n": 1 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

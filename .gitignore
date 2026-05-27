@@ -1,0 +1,23 @@
+# Foundry artifacts (only relevant under assets/fixtures/)
+assets/fixtures/out/
+assets/fixtures/cache/
+assets/fixtures/broadcast/
+assets/fixtures/lib/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor temp
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Holdings cache produced by eligibility runs (per-user, never committed)
+holdings/
+
+# Local environment
+.env
+.env.local

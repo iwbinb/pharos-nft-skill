@@ -1,0 +1,5 @@
+{
+  "_comment": "User-curated NFT collection registry for Pharos networks. Add entries here to enable name-based lookup (e.g. user says \"PharosPunks\" instead of pasting the contract address). The skill never auto-discovers collections from the explorer (anti-bot protections block automated access). To add a collection: append an entry under the appropriate network with contract address, standard (ERC721 | ERC721Enumerable | ERC1155 | NonStandard), and optional metadata.",
+  "atlantic-testnet": [],
+  "mainnet": []
+}

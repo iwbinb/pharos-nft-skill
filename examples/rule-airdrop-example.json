@@ -1,0 +1,12 @@
+{
+  "_comment": "Sample airdrop eligibility rule. Distribute the airdrop to wallets holding at least 1 NFT from collection A AND at least 2 NFTs from collection B, excluding any wallet that also holds an NFT from the blacklist collection C.",
+  "_network": "atlantic-testnet",
+  "all_of": [
+    { "min_count": { "collection": "0x0000000000000000000000000000000000000000aaaa", "n": 1 } },
+    { "min_count": { "collection": "0x0000000000000000000000000000000000000000bbbb", "n": 2 } },
+    { "none_of": [
+        { "min_count": { "collection": "0x0000000000000000000000000000000000000000cccc", "n": 1 } }
+      ]
+    }
+  ]
+}

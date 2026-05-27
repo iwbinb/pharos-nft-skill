@@ -1,0 +1,5 @@
+{
+  "_comment": "Known staking, escrow, or custody contracts that hold NFTs on behalf of users. When ownerOf returns one of these addresses, the skill must call the proxy's resolver method to find the real beneficial owner. Each entry specifies the proxy address and the resolver method signature. Example resolver methods: ownerOf(uint256), stakerOf(address,uint256), depositorOf(uint256).",
+  "atlantic-testnet": [],
+  "mainnet": []
+}
