@@ -119,8 +119,7 @@ pharos-nft-skill/
 ├── LICENSE                         # MIT-0
 ├── CHANGELOG.md
 ├── README.md                       # 英文版（campaign 提交用）
-├── README.zh-CN.md                 # 本文档
-└── SUBMISSION.md                   # Discord 提交消息草稿
+└── README.zh-CN.md                 # 本文档
 ```
 
 ## 设计原则
@@ -183,4 +182,4 @@ MIT-0，自由使用、修改、再分发，无需署名。见 [LICENSE](LICENSE
 
 ## 提交信息
 
-本 skill 为 [Pharos Agent Center - Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign) 撰写。提交格式见 [SUBMISSION.md](SUBMISSION.md)。
+本 skill 为 [Pharos Agent Center - Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign) 撰写。

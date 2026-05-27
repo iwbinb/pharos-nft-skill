@@ -17,7 +17,7 @@ Initial release for the Pharos Agent Center Skill Builder Campaign.
 - Optional fixture contracts under `assets/fixtures/`: `DemoERC721` (with Enumerable extension) and `DemoERC1155`, plus forge deploy script and a fixture README with deploy + mint runbook.
 - `examples/rule-{airdrop,gating}-example.json` showing the DSL schema in practice.
 - `tests/` suite (16 tests across lint, jq, and live RPC).
-- `README.md`, `SUBMISSION.md` (Discord submission payload), `LICENSE` (MIT-0).
+- `README.md`, `LICENSE` (MIT-0).
 
 ### Fixed (during the testing pass)
 

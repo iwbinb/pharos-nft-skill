@@ -59,7 +59,6 @@ drwxr-xr-x   4 user  staff    128 May 27 14:45 ..
 -rw-r--r--@  1 user  staff  11152 May 27 14:45 README.md
 -rw-r--r--@  1 user  staff  10690 May 27 14:45 README.zh-CN.md
 -rw-r--r--@  1 user  staff  12838 May 27 14:45 SKILL.md
--rw-r--r--@  1 user  staff   3394 May 27 14:45 SUBMISSION.md
 drwxr-xr-x@  7 user  staff    224 May 27 14:45 assets
 drwxr-xr-x@  5 user  staff    160 May 27 14:45 examples
 drwxr-xr-x@  7 user  staff    224 May 27 14:45 references

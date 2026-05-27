@@ -115,8 +115,7 @@ pharos-nft-skill/
 │   ├── run.sh                      # top-level runner
 │   └── README.md
 ├── LICENSE                         # MIT-0
-├── README.md                       # this file
-└── SUBMISSION.md                   # Discord submission message draft
+└── README.md                       # this file
 ```
 
 ## Design Principles
@@ -179,4 +178,4 @@ MIT-0: free to use, modify, and redistribute. No attribution required. See [LICE
 
 ## Submission
 
-This skill was built for the [Pharos Agent Center: Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign). See [SUBMISSION.md](SUBMISSION.md) for the formal submission payload.
+This skill was built for the [Pharos Agent Center: Skill Builder Campaign](https://silken-muskox-24e.notion.site/pharos-agent-center-skill-builder-campaign).
