@@ -8,15 +8,15 @@ Per the campaign rules ("submission details need to be in one message as a whole
 
 **Short description**: Production-grade NFT (ERC-721 + ERC-1155) toolkit for Pharos. Adds the one major capability the official pharos-skill-engine does not cover: NFTs. Provides ownership checks, holder snapshots, transfer history, wallet diffs, and a declarative eligibility rule DSL (AND / OR / NOT, count thresholds, trait filters) for airdrops and gating. All workflows are Multicall3-batched and read-only by default. Composes with pharos-skill-engine.
 
-**GitHub link**: https://github.com/<YOUR-GH-USERNAME>/pharos-nft-skill
+**GitHub link**: https://github.com/iwbinb/pharos-nft-skill
 
-**Email Address**: iwbinb@icloud.com
+**Email Address**: iwbinb@gmail.com
 
 **Demo link / video / screenshots**: See README.md and references/*.md for end-to-end examples. A walkthrough video is included at /docs/demo.mp4 in the repo (record after deploying fixtures to Atlantic testnet).
 
 **Instructions on how to use the Skill**:
 1. Install Foundry: `curl -L https://foundry.paradigm.xyz | bash && foundryup`
-2. Install the skill: `npx skills add https://github.com/<YOUR-GH-USERNAME>/pharos-nft-skill`
+2. Install the skill: `npx skills add https://github.com/iwbinb/pharos-nft-skill`
 3. Verify in Claude Code: type `/skills`: `pharos-nft-skill` should appear with a green checkmark
 4. Use natural language: "does wallet 0xabc... own any NFTs in collection 0xdef... on Pharos testnet?". The skill triggers automatically on NFT-related Pharos questions and generates the appropriate cast / forge commands.
 
@@ -34,7 +34,7 @@ Per the campaign rules ("submission details need to be in one message as a whole
 
 ## How to send
 
-1. Replace `<YOUR-GH-USERNAME>` with the actual GitHub org / user where the repo is pushed.
+1. GitHub username is already set to `iwbinb`. Adjust if pushing to a different account.
 2. Replace the demo video reference with a real link (Loom, YouTube unlisted, or repo-hosted MP4) **after recording**.
 3. Paste the entire payload above (between the two `---` lines) as ONE message in `#skill-submission` on https://discord.com/invite/pharos.
 4. Do not split across multiple messages: the campaign rules require a single message.

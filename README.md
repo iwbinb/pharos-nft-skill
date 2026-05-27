@@ -43,9 +43,9 @@ Pick the entry that matches your Agent:
 
 | Agent | Install Command |
 |-------|-----------------|
-| Claude Code | `npx skills add https://github.com/<your-fork>/pharos-nft-skill` |
-| OpenClaw | `npx skills add https://github.com/<your-fork>/pharos-nft-skill` |
-| Codex | `npx skills add https://github.com/<your-fork>/pharos-nft-skill` |
+| Claude Code | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
+| OpenClaw | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
+| Codex | `npx skills add https://github.com/iwbinb/pharos-nft-skill` |
 
 After installation, verify it loaded:
 
